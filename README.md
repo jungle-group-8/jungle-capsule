@@ -2,7 +2,9 @@
 jungle capsule client&amp;server 레포지토리입니다.
 
 
-## 폴더 구조
+## 📁 프로젝트 구조
+
+```text
 jungle-capsule/
 ├── .git/
 ├── .gitignore
@@ -10,12 +12,23 @@ jungle-capsule/
 ├── requirements.txt
 │
 ├── routes/
-├── services/
-├── models/
-├── static/
-├── templates/
+│   └── ...
 │
-└── .venv/                 ← 가상환경
+├── services/
+│   └── ...
+│
+├── models/
+│   └── ...
+│
+├── static/
+│   ├── css/
+│   ├── js/
+│   └── images/
+│
+├── templates/
+│   └── ...
+│
+└── .venv/                 # Python 가상환경
     ├── bin/
-    ├── lib/
-    └── ...
+    ├── include/
+    └── lib/
