@@ -9,6 +9,10 @@ collection=db["items"]
 
 app = Flask(__name__)
 
+@app.route("/")
+def index():
+    return render_template("base.html")
+
 try:
     client.admin.command("ping")
     print("MongoDB 연결 성공")
