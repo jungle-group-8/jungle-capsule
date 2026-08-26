@@ -5,3 +5,11 @@ body{
     font-family:Arial,sans-serif;
     background-color:#E1FFDF;
 }
+
+@layer utilities {
+  .bg-banner {
+    background-image: url('/images/capsule_logo.png');
+    background-size: cover;
+    background-position: center;
+  }
+}
