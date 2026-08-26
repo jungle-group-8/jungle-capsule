@@ -1,11 +1,11 @@
-from flask import session, Blueprint, request,jsonify
+from flask import session, Blueprint, request,jsonify,render_template, redirect, url_for
 from database import db
-# from enum import IntEnum #enum값 사용 위함
+from enum import Enum #enum값 사용 위함
 
-# class Class(Enum):
-#     SW_AI = 1
-#     Game = 2
-#     Game_tech = 3
+class Class(Enum):
+    SW_AI = 1
+    Game = 2
+    Game_tech = 3
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -16,30 +16,40 @@ def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리�
     isUser = db.Users.find_one({"id": userId})
     if isUser is not None: #사용자가 있다면
         if db.Users.find_one({"id": userId, "pw": userPw}) is not None: #비번까지 검증
+            #정보 가져오기
+            user = db.Users.find_one({"id":userId, "pw": userPw})
             session['id'] = userId
+            session['name'] = user['name']
+            session['curriculum'] = user['curriculum']
+            session['class'] = user['class']
+
             isSuccess = "success"
+            template = "capsule/main.html"
             #return render_template("login.html", success = isSuccess ) #(변수) 판단후 넘김
-            #return redirect(url_for('login')) #로그인 페이지로 이동
-            return jsonify({'result': 'success'})
-
-
+            #return jsonify({'result': 'success'})
+            return redirect(url_for("capsule.main")) #로그인 페이지로 이동
         else: #비밀번호가 틀리다면
             session['id'] = None
             isSuccess = "pw_fail"
-            return render_template("login.html", success = isSuccess )
+            template = "auth/login.html"
+            return render_template(template, success = isSuccess )
             #return jsonify({'result': 'pw_fail'})
             #return redirect(url_for('login')) #로그인 페이지로 이동 #redirect할때 메모도 같이 보낼 수 있는지 확인
 
     else: #사용자가 없다면
         session['id'] = None
+        isSuccess = "id_fail"
+        template = "auth/login.html"
+        return rendertemplate(template, success = isSuccess )
         #return jsonify({'result': 'id_fail'})
         #return redirect(url_for('index')) #자신의 페이지로 이동
-        return jsonify({'id': userId, 'pw': userPw})
+        #return jsonify({'id': userId, 'pw': userPw})
 
 @auth_bp.route('/logout', methods = ['POST'])
 def logout():
     session.pop('id',None)
-    return jsonify({'result': 'success'})
+    #return jsonify({'result': 'success'})
+    return render_template("login.html", success = "logout_success" )
 
 
 @auth_bp.route('/signup', methods = ['POST'])
