@@ -1,10 +1,18 @@
 import boto3
 
 from botocore.client import Config
-from flask import Blueprint, current_app, request
+from flask import Blueprint, current_app, request,jsonify
 from werkzeug.utils import secure_filename
+import uuid
 
 image_bp = Blueprint("image", __name__)
+
+s3 = boto3.client(
+        "s3",
+        aws_access_key_id=current_app.config["S3_ACCESS_KEY"],
+        aws_secret_access_key=current_app.config["S3_SECRET_KEY"],
+        config=Config(signature_version="s3v4"),
+    )
 
 
 @image_bp.route("/img-upload", methods=["POST"])
@@ -16,17 +24,32 @@ def upload_file():
 
     filename = secure_filename(file.filename)
 
-    s3 = boto3.client(
-        "s3",
-        aws_access_key_id=current_app.config["S3_ACCESS_KEY"],
-        aws_secret_access_key=current_app.config["S3_SECRET_KEY"],
-        config=Config(signature_version="s3v4"),
-    )
+    extension = filename.rsplit(".", 1)[-1].lower()
+
+    object_key = f"capsules/{uuid.uuid4()}.{extension}"
 
     s3.upload_fileobj(
         file,
         current_app.config["S3_BUCKET"],
-        filename,
+        object_key,
+        ExtraArgs={
+            "ContentType": file.content_type
+        }
     )
 
-    return "File upload successfully", 200
+    return jsonify({
+        "success": True,
+        "objectKey": object_key
+    })
+
+
+# 이미지 조회용 Url
+def view_file(object_key):
+    file=s3.generate_presigned_url(
+        "get_object",
+        Params={
+            "Bucket":current_app.config["S3_BUCKET"],
+            "Key":object_key
+        },
+        ExpiresIn=3600
+    )
