@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="min-h-screen flex items-center justify-center">
+
+    <div class="w-full max-w-md flex flex-col items-center gap-8 px-6">
+
+        <!-- 로고 -->
+        <div class="w-full flex justify-center">
+            <img
+                src="{{ url_for('static', filename='images/capsule_with_tree.png') }}"
+                class="w-100"
+                alt="정글 캡슐 로고"
+            >
+        </div>
+
+        <!-- 로그인 폼 -->
+        <div class="w-full flex flex-col gap-5">
+
+            <div class="flex items-center gap-4">
+                <label class="w-24 text-sm font-semibold text-gray-700">
+                    이름
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    class="flex-1 border border-gray-300 rounded-lg px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
+                           bg-white
+                           focus:border-transparent"
+                >
+            </div>
+
+            <div class="flex items-center gap-4">
+                <label class="w-24 text-sm font-semibold text-gray-700">
+                    이메일
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    class="flex-1 border border-gray-300 rounded-lg px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
+                           bg-white
+                           focus:border-transparent"
+                >
+            </div>
+
+            <div class="flex items-center gap-6">
+                <label class="w-24 text-sm font-semibold text-gray-700">
+                    커리큘럼
+                </label>
+
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="radio"
+                        name="gender"
+                        value="male"
+                        class="w-4 h-4 accent-[#BFDDB8]"
+                    >
+                    <span class="text-sm text-gray-700">SW-AI</span>
+                </label>
+
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="radio"
+                        name="gender"
+                        value="female"
+                        class="w-4 h-4 accent-[#BFDDB8]"
+                    >
+                    <span class="text-sm text-gray-700">Game</span>
+                </label>
+
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="radio"
+                        name="gender"
+                        value="female"
+                        class="w-4 h-4 accent-[#BFDDB8]"
+                    >
+                    <span class="text-sm text-gray-700">Game Tech</span>
+                </label>
+            </div>
+
+
+            <div class="flex items-center gap-4">
+                <label class="w-24 text-sm font-semibold text-gray-700">
+                    기수
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    class="flex-1 border border-gray-300 bg-white rounded-lg px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
+                           focus:border-transparent"
+                >
+            </div>
+
+            <div class="border-t border-gray-400"></div>
+
+            <div class="flex items-center gap-4">
+                <label class="w-24 text-sm font-semibold text-gray-700">
+                    ID
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    class="flex-1 border border-gray-300 bg-white rounded-lg px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
+                           focus:border-transparent"
+                >
+                <button
+                    type="submit"
+                    class="w-1/4 py-2.5
+                        bg-[#BFDDB8] text-gray-800 font-semibold
+                        border border-gray-200
+                        rounded-xl shadow-sm
+                        hover:bg-[#BFDDB8]
+                        transition"
+                >
+                    중복 확인
+                </button>
+
+            </div>
+
+            <div class="flex items-center gap-4">
+                <label class="w-24 text-sm font-semibold text-gray-700">
+                    비밀번호
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    class="flex-1 border border-gray-300 bg-white rounded-lg px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
+                           focus:border-transparent"
+                >
+            </div>
+
+            <div class="flex items-center gap-4">
+                <label class="w-24 text-sm font-semibold text-gray-700">
+                    비밀번호 확인
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    class="flex-1 border border-gray-300 bg-white rounded-lg px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
+                           focus:border-transparent"
+                >
+            </div>
+
+            <label class="w-full text-sm font-semibold text-gray-700">
+                    <span class="font-semibold">정글 수강생 인증</span><br>
+                    정글에서 쓰고있는 와이파이 비밀번호는 무엇인가요?
+            </label>
+
+            <div class="flex items-center">
+                <input
+                    type="text"
+                    name="name"
+                    class="flex-1 border border-gray-300 bg-white rounded-lg px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
+                           focus:border-transparent"
+                >
+            </div>
+
+            <div class="flex gap-6">
+                <button
+                    type="button"
+                    class=" w-1/2 py-2.5
+                        bg-gray-200 text-gray-800 font-semibold
+                        border border-gray-200
+                        rounded-xl shadow-sm
+                        hover:bg-gray-300
+                        transition"
+                    onclick="location.href=`{{ url_for('login') }}`"
+                >
+                    취소
+                </button>
+                <button
+                    type="button"
+                    class="w-1/2 py-2.5
+                        bg-white text-gray-800 font-semibold
+                        border border-gray-200
+                        rounded-xl shadow-sm
+                        hover:bg-[#BFDDB8]
+                        transition"
+                >
+                    회원가입
+                </button>
+            </div>
+            
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
