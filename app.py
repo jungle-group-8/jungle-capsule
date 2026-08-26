@@ -1,17 +1,20 @@
 from flask import Flask
 from routes.capsule import capsule_bp
+<<<<<<< HEAD
 from routes.auth import auth_bp
 <<<<<<< HEAD
 from dotenv import load_dotenv
 
 =======
 >>>>>>> 9fd3f3d (resolve conflicts)
+=======
+>>>>>>> 1aa651d (fix: /login 접속 안되는 오류 해결)
 from services.auth import login #blueprint사용 login.py import
 from routes import capsule
 from database import client   #database에서 client  변수 가져옴
 from dotenv import load_dotenv
 import os
-from routes import capmaking,capsulelist,checkcap,deletecap,detailcpa,member,question
+from routes import capmaking,capsulelist,checkcap,deletecap,detailcpa,member,question, auth
 from services import imageupload
 
 
@@ -31,6 +34,7 @@ app.register_blueprint(detailcpa.detailcap)
 app.register_blueprint(member.members)
 app.register_blueprint(question.question)
 app.register_blueprint(imageupload.image_bp)
+app.register_blueprint(auth.auth_page_bp)
 
 app.register_blueprint(capsule_bp)
 app.register_blueprint(login.auth_bp)
