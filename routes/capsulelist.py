@@ -1,17 +1,11 @@
-from flask import Flask,render_template,request,jsonify,session,redirect,url_for
-from bson import ObjectId
-from pymongo import MongoClient
-import os
+from flask import Blueprint,request,redirect,url_for,render_template
 from datetime import datetime
-import random
+from database import db
+from bson import ObjectId
 
-client=MongoClient(os.getenv("MONGO_URL"))
-db=client["jungle-capsule"]
-collection=db["items"]
+caplist = Blueprint('caplist',__name__,url_prefix='/caplist')
 
-app = Flask(__name__)
-
-@app.route('/list_Capsule/<user_id>', methods = ['GET'])
+@caplist.route('/list_Capsule/<user_id>', methods = ['GET'])
 def list_Capsule(user_id):
     capsules = list(db.Capsule.find({'receiveId':user_id}))
     for capsule in capsules :
@@ -25,7 +19,7 @@ def list_Capsule(user_id):
         else:
             doc = {
                     'id':ObjectId(capsules['_id']),
-                    'dDay':"0",
+                    'dDay':"오픈가능",
                     'previewTitle': capsules['previewTitle'],
                     'isOpen':True
              }

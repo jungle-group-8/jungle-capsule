@@ -1,16 +1,11 @@
-from flask import Flask,render_template,request,jsonify
-from bson import ObjectId
-from pymongo import MongoClient
-import os
+from flask import Blueprint,request,redirect,url_for,render_template
 from datetime import datetime
+from database import db
+from bson import ObjectId
 
-client=MongoClient(os.getenv("MONGO_URL"))
-db=client["jungle-capsule"]
-collection=db["items"]
+capmaking = Blueprint('capmaking',__name__,url_prefix='/capmaking')
 
-app = Flask(__name__)
-
-@app.route('/making_Capsule', methods =['POST'])
+@capmaking.route('/making_Capsule', methods =['POST'])
 def makingCapsule():
     doc = {
         'sendId' : request.form['sendId'],

@@ -4,22 +4,22 @@ from pymongo import MongoClient
 import os
 from datetime import datetime
 import random
+from routes import capmaking,capsulelist,checkcap,deletecap,detailcpa,member,question
 
+client=MongoClient(os.getenv("MONGO_URL"))
+db=client["jungle-capsule"]
+collection=db["items"]
 
 
 
 app = Flask(__name__)
-
-
-
-
-<<<<<<< HEAD
-        
-        
-
-
-=======
->>>>>>> 6108f6efcc2bb4ab2fddff34af6263fae4e2f801
+app.register_blueprint(capmaking.capmaking)
+app.register_blueprint(capsulelist.caplist)
+app.register_blueprint(checkcap.checkcap)
+app.register_blueprint(deletecap.deletecap)
+app.register_blueprint(detailcpa.detailcap)
+app.register_blueprint(member.members)
+app.register_blueprint(question.question)
 
 
 if __name__ == '__main__':  
