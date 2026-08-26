@@ -1,11 +1,11 @@
 from flask import session, Blueprint, request,jsonify
 from database import db
-from enum import IntEnum #enum값 사용 위함
+# from enum import IntEnum #enum값 사용 위함
 
-class Class(Enum):
-    SW_AI = 1
-    Game = 2
-    Game_tech = 3
+# class Class(Enum):
+#     SW_AI = 1
+#     Game = 2
+#     Game_tech = 3
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -18,9 +18,9 @@ def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리�
         if db.Users.find_one({"id": userId, "pw": userPw}) is not None: #비번까지 검증
             session['id'] = userId
             isSuccess = "success"
-            return render_template("login.html", success = isSuccess ) #(변수) 판단후 넘김
+            #return render_template("login.html", success = isSuccess ) #(변수) 판단후 넘김
             #return redirect(url_for('login')) #로그인 페이지로 이동
-            #jsonify({'result': 'success'})
+            return jsonify({'result': 'success'})
 
 
         else: #비밀번호가 틀리다면
