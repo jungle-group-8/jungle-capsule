@@ -1,12 +1,15 @@
 from flask import Flask
 from routes.capsule import capsule_bp
 from routes.auth import auth_bp
+<<<<<<< HEAD
 from dotenv import load_dotenv
 
+=======
+>>>>>>> 9fd3f3d (resolve conflicts)
 from services.auth import login #blueprint사용 login.py import
 from routes import capsule
 from database import client   #database에서 client  변수 가져옴
-
+from dotenv import load_dotenv
 import os
 from routes import capmaking,capsulelist,checkcap,deletecap,detailcpa,member,question
 from services import imageupload
