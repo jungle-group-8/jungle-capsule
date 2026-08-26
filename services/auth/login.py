@@ -30,18 +30,18 @@ def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리�
         else: #비밀번호가 틀리다면
             session['id'] = None
             isSuccess = "pw_fail"
-            # return render_template(url_for("auth.login") )
+            return render_template("auth/login.html")
             #return redirect(url_for("auth.login"))#, success = isSuccess)
             #return render_template("auth/login.html", success = isSuccess)
-            return jsonify({'result': 'pw_fail'})
+            #return jsonify({'result': 'pw_fail'})
             #return redirect(url_for('login')) #로그인 페이지로 이동 #redirect할때 메모도 같이 보낼 수 있는지 확인
 
     else: #사용자가 없다면
         session['id'] = None
         isSuccess = "id_fail"
         #return redirect(url_for("auth.login"))#, success = isSuccess)
-        #return render_template("templates/auth/login.html", success = isSuccess)
-        return jsonify({'result': 'id_fail'})
+        return render_template("auth/login.html")
+        #return jsonify({'result': 'id_fail'})
         #return redirect(url_for('index')) #자신의 페이지로 이동
         #return jsonify({'id': userId, 'pw': userPw})
 
