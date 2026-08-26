@@ -3,7 +3,7 @@ from flask import Blueprint, render_template
 capsule_bp = Blueprint("capsule", __name__)
 
 @capsule_bp.route("/")
-def index():
+def main():
     return render_template("capsule/main.html")
 
 @capsule_bp.route("/create")

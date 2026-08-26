@@ -35,7 +35,7 @@
 
     <div class="flex gap-4">
         <div class="w-1/2 grid grid-cols-2 gap-4">
-            <button type="button" onclick="location.href=`{{ url_for('create_choice') }}`"
+            <button type="button" onclick="location.href=`{{ url_for('capsule.create_choice') }}`"
                 class="font-bold text-left w-full h-100 rounded-[20px] px-4 py-2 bg-white text-black shadow-md hover:bg-[#BFDDB8] transition">
                 캡슐 생성
             </button>
@@ -45,7 +45,7 @@
             </button>
             <button
                 class="font-bold text-left w-full col-span-2 h-100 px-4 py-2 bg-white text-black rounded-[20px] shadow-md hover:bg-[#BFDDB8] transition"
-                onclick="location.href=`{{ url_for('capsule_storage') }}`">
+                onclick="location.href=`{{ url_for('capsule.capsule_storage') }}`">
                 나의 캡슐 보관함
             </button>
         </div>
