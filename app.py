@@ -18,8 +18,6 @@ app = Flask(__name__)
 load_dotenv()
 
 app.secret_key = os.getenv("SECRET_KEY")
-app.register_blueprint(capsule.capsule_bp)
-app.register_blueprint(login.auth_bp)
 
 
 app.register_blueprint(capmaking.capmaking)
@@ -32,7 +30,7 @@ app.register_blueprint(question.question)
 app.register_blueprint(imageupload.image_bp)
 
 app.register_blueprint(capsule_bp)
-app.register_blueprint(auth_bp)
+app.register_blueprint(login.auth_bp)
 
 app.config["S3_ACCESS_KEY"] = os.getenv("S3_ACCESS_KEY")
 app.config["S3_SECRET_KEY"] = os.getenv("S3_SECRET_KEY")
