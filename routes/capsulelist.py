@@ -1,23 +1,21 @@
-from flask import Blueprint,request,redirect,url_for,render_template,session
-from datetime import datetime
+from flask import Blueprint,session,render_template
+from datetime import datetime,timedelta
 from database import db
-from bson import ObjectId
 
 caplist = Blueprint('caplist',__name__,url_prefix='/caplist')
 
-@caplist.route('/list_Capsule', methods=['GET'])
-def list_Capsule():
-    user_id = session.get('id')
-
-    if not user_id:
-        return render_template('auth/login.html')
+def get_capsules_list(user_id):
+    print("조회할 receiveId:", repr(user_id), flush=True)
 
     capsules = list(
-        db.Capsule.find({'receiveId': user_id})
+        db.Capsule.find({"receiveId": user_id})
     )
 
+    print("조회된 캡슐 개수:", len(capsules), flush=True)
+    print("조회 결과:", capsules, flush=True)
+
     if not capsules:
-        return None
+        return []
 
     capsules_list = []
     today = datetime.now()
@@ -29,7 +27,7 @@ def list_Capsule():
             d_day = (open_time - today).days + 1
             is_open = False
         else:
-            d_day = "오픈가능"
+            d_day = "Day"
             is_open = True
 
             db.Capsule.update_one(
@@ -46,7 +44,47 @@ def list_Capsule():
         }
 
         capsules_list.append(doc)
-    return render_template(
-        'capsule/storage.html',
-        capsules_list=capsules_list
+    return capsules_list
+
+def count_cap():
+    user_id = session.get('id')
+
+    if not user_id:
+        return render_template('auth/login.html')
+
+    openCap = list(
+        db.Capsule.find({
+            'receiveId': user_id,
+            'isOpen': True
+        })
     )
+    OpenCapCount = len(openCap)
+
+    CloseCap = list(
+        db.Capsule.find({
+            'receiveId': user_id
+        })
+    )
+    CloseCapCount = len(CloseCap) - OpenCapCount
+
+    today_start = datetime.now().replace(
+        hour=0,
+        minute=0,
+        second=0
+    )
+    tomorrow_start = today_start + timedelta(days=1)
+
+    create = list(
+        db.Capsule.find({
+            'receiveId': user_id,
+            'CreatedAt': {
+                '$gte': today_start,
+                '$lt': tomorrow_start
+            }
+        })
+    )
+    CreateCount = len(create)
+
+    return {"OpenCapCount" : OpenCapCount,
+        "CloseCapCount" : CloseCapCount,
+        "CreateCount" :CreateCount}

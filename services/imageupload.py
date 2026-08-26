@@ -18,9 +18,7 @@ def get_s3_client():
     )
 
 
-@image_bp.route("/img-upload", methods=["POST"])
-def upload_file():
-    file = request.files.get("file")
+def upload_file(file):
 
     if not file or not file.filename:
         return jsonify({
@@ -44,14 +42,13 @@ def upload_file():
         }
     )
 
-    return jsonify({
+    return {
         "success": True,
         "objectKey": object_key
-    })
+    }
 
 
 def view_file(object_key):
-    """S3 이미지 조회용 Presigned URL 생성"""
     s3 = get_s3_client()
 
     presigned_url = s3.generate_presigned_url(

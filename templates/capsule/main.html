@@ -7,23 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>홈화면</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}"> </head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
+</head>
 
-    <script>
-        function openModal() {
-            const modal = document.getElementById('modal');
+<script>
+    function openModal() {
+        const modal = document.getElementById('modal');
 
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
 
-        function closeModal() {
-            const modal = document.getElementById('modal');
+    function closeModal() {
+        const modal = document.getElementById('modal');
 
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-    </script>
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+</script>
 
 <body>
     <!-- 헤더 -->
@@ -55,31 +56,29 @@
 
             <!-- 오늘의 질문 -->
             <div class="col-span-2 h-100 px-4 py-2 text-black">
-                <h2 class="font-bold text-left text-xl">오늘의 질문 (2026.8.25(화))</h2>
-                <p class="text-left text-xl">"오늘 고마운 사람이 있나요?"</p>
+                <h2 class="font-bold text-left text-xl">오늘의 질문</h2>
+                <p class="text-left text-xl">{{qa}}</p>
+
             </div>
 
             <!-- 대시보드  -->
+            #main.html수정
+
             <button
                 class="font-bold text-left w-full h-50 px-4 py-2 bg-white text-black rounded-[20px] shadow-md hover:bg-[#BFDDB8] transition">
                 오늘 열 수 있는 캡슐 개수
-                <num class="text-2xl font-bold text-black">3</num>
+                <num class="text-2xl font-bold text-black">{{count_cap.get("OpenCapCount")}}</num>
             </button>
             <button
                 class="font-bold text-left w-full px-4 py-2 bg-white text-black rounded-[20px] shadow-md hover:bg-[#BFDDB8] transition">
                 오늘 받은 캡슐 개수
-                <num class="text-2xl font-bold text-black">3</num>
+                <num class="text-2xl font-bold text-black">{{count_cap.get("CloseCapCount")}}</num>
             </button>
 
             <button
                 class="font-bold text-left w-full h-50 px-4 py-2 bg-white text-black rounded-[20px] shadow-md hover:bg-[#BFDDB8] transition">
                 오늘 작성한 캡슐 개수
-                <num class="text-2xl font-bold text-black">3</num>
-            </button>
-            <button
-                class="font-bold text-left w-full px-4 py-2 bg-white text-black rounded-[20px] shadow-md hover:bg-[#BFDDB8] transition">
-                미정
-                <num class="text-2xl font-bold text-black">3</num>
+                <num class="text-2xl font-bold text-black">{{count_cap.get("CreateCount")}}</num>
             </button>
         </div>
     </div>
@@ -95,27 +94,30 @@
 
             <div class="border-t border-gray-400 mb-4"></div>
 
-            <textarea name="content" placeholder="내용을 입력하세요" class="w-full mb-1 flex-1 min-h-32 border bg-white border-gray-300 rounded-md p-2
-                focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]"></textarea>
+            <form action="{{ url_for('capquestion.making_QA') }}" method="POST">
+                <textarea name="questionList" required placeholder="내용을 입력하세요" class="w-full mb-1 flex-1 min-h-32 border bg-white border-gray-300 rounded-md p-2
+                    focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]"></textarea>
 
-            <div class="flex gap-3">
-                <button type="button" class=" w-1/2 py-2.5
-                            bg-gray-200 text-gray-800 font-semibold
-                            border border-gray-200
-                            rounded-xl shadow-sm
-                            hover:bg-gray-300
-                            transition" onclick="closeModal()">
-                    취소
-                </button>
-                <button type="button" class="w-1/2 py-2.5
-                            bg-white text-gray-800 font-semibold
-                            border border-gray-200
-                            rounded-xl shadow-sm
-                            hover:bg-[#BFDDB8]
-                            transition">
-                    질문 보내기
-                </button>
-            </div>
+                <div class="flex gap-3">
+                    <button type="button" class=" w-1/2 py-2.5
+                                bg-gray-200 text-gray-800 font-semibold
+                                border border-gray-200
+                                rounded-xl shadow-sm
+                                hover:bg-gray-300
+                                transition" onclick="closeModal()">
+                        취소
+                    </button>
+
+                    <button type="submit" class="w-1/2 py-2.5
+                                bg-white text-gray-800 font-semibold
+                                border border-gray-200
+                                rounded-xl shadow-sm
+                                hover:bg-[#BFDDB8]
+                                transition">
+                        질문 보내기
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
     {% endblock %}

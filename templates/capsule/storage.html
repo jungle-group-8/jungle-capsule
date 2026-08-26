@@ -9,22 +9,6 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}"> </head>
 
-    <script>
-        function openModal() {
-            const modal = document.getElementById('capsule-modal');
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('capsule-modal');
-
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-    </script>
-
 <body>
     <!-- 헤더 -->
     {% include 'components/header.html' %}
@@ -35,18 +19,22 @@
 
     <div class="grid grid-cols-5 gap-3 place-items-center py-3">
 
-        {%for capsule in capsule_list%}
+        {%for capsule in capsules_list%}
         <div class="flex flex-col bg-white shadow-2xl rounded-[20px]">
             {% if not capsule.isOpen %}
                 <img src="{{ url_for('static', filename='images/closed_capsule.png') }}" alt="닫힌 캡슐"
-                    class="w-60 h-60 mx-auto mt-8 cursor-pointer" onclick="openModal()">
+                    class="w-60 h-60 mx-auto mt-8 cursor-pointer" onclick="openModal('{{ capsule.id }}')">
                 <div class=" text-shadow-black pt-1 pb-1 w-[80%] mx-auto bg-[#BFDDB8] border-r-amber-50 rounded-lg text-lg text-center font-bold
                     leading-4"><p>D-{{capsule.dDay}}</p></div>
                 <div class="py-2.5 text-shadow-black text-xs text-center
                     leading-4"><p>{{capsule.previewTitle}}</p></div>
             {% else %}
                 <img src="{{ url_for('static', filename='images/opened_capsule.png') }}" alt="열린 캡슐"
-                    class="w-60 h-60 mx-auto mt-8 cursor-pointer" onclick="openModal()">
+                    class="w-60 h-60 mx-auto mt-8 cursor-pointer" onclick="openModal('{{ capsule.id }}')">
+                <div class=" text-shadow-black pt-1 pb-1 w-[80%] mx-auto bg-[#BFDDB8] border-r-amber-50 rounded-lg text-lg text-center font-bold
+                    leading-4"><p>D-{{capsule.dDay}}</p></div>
+                <div class="py-2.5 text-shadow-black text-xs text-center
+                    leading-4"><p>{{capsule.previewTitle}}</p></div>
             {% endif %}
         </div>
         {% endfor %}
@@ -57,11 +45,9 @@
     <div id="capsule-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40 px-4 py-4">
         <div class="w-full max-w-md bg-[#BFDDB8] rounded-3xl shadow-2xl p-6">
 
-            <div class="flex justify-between items-center"
-                <h2 class="text-2xl font-bold text-black mb-1">00님으로부터 온 캡슐</h2>
-                <p class="text-black text-left mb-1">
-                    2026.08.24(월)
-                </p>
+            <div class="flex justify-between items-center">
+                <h2 id="modal-sender" class="text-2xl font-bold text-black mb-1"></h2>
+                <p id="modal-created-at" class="text-black text-left mb-1"></p>
             </div>
 
             <div class="border-t border-gray-400 mb-4"></div>
@@ -74,7 +60,7 @@
                         제목
                     </label>
 
-                    <input type="text" readonly name="title" class="flex-1 border bg-white border-gray-300 rounded-md p-2
+                    <input id="modal-title" type="text" readonly name="title" class="flex-1 border bg-white border-gray-300 rounded-md p-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]">
                 </div>
 
@@ -83,7 +69,7 @@
                         링크
                     </label>
 
-                    <input type="text" readonly name="link" class="flex-1 border bg-white border-gray-300 rounded-md p-2
+                    <input id="modal-link" type="text" readonly name="link" class="flex-1 border bg-white border-gray-300 rounded-md p-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]">
                 </div>
 
@@ -92,8 +78,16 @@
                         내용
                     </label>
 
-                    <textarea name="content" readonly class="flex-1 min-h-32 border bg-white border-gray-300 rounded-md p-2
+                    <textarea id="modal-content" name="content" readonly class="flex-1 min-h-32 border bg-white border-gray-300 rounded-md p-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]"></textarea>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <img
+                        id="modal-image"
+                        alt="캡슐 이미지"
+                        class="w-full rounded-lg"
+                    >
                 </div>
 
                 <div class="bg-banner"></div>
@@ -111,6 +105,53 @@
                 </div>
             </div>
         </div>
+    </div>
+
+        <script>
+            async function openModal(capsuleId) {
+                const detailUrl = "{{ url_for('capdetail.detail_Capsule', capsule_id='CAPSULE_ID') }}"
+                    .replace('CAPSULE_ID', encodeURIComponent(capsuleId));
+
+
+                try {
+                    const response = await fetch(detailUrl);
+                    const capsuleInfo = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(capsuleInfo.message || '캡슐 상세 조회에 실패했습니다.');
+                    }
+
+                    document.getElementById('modal-sender').textContent = `${capsuleInfo.sendId}님으로부터 온 캡슐`;
+                    document.getElementById('modal-created-at').textContent = capsuleInfo.CreatedAt
+                        ? new Date(capsuleInfo.CreatedAt).toLocaleDateString('ko-KR')
+                        : '';
+                    document.getElementById('modal-title').value = capsuleInfo.title || '';
+                    document.getElementById('modal-link').value = capsuleInfo.link || '';
+                    document.getElementById('modal-content').value = capsuleInfo.contents || '';
+                    const modalImage = document.getElementById('modal-image');
+
+                    if (capsuleInfo.presignedUrl) {
+                        modalImage.src = capsuleInfo.presignedUrl;
+                        modalImage.classList.remove('hidden');
+                    } else {
+                        modalImage.src = '';
+                        modalImage.classList.add('hidden');
+                    }
+
+                    const modal = document.getElementById('capsule-modal');
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                } catch (error) {
+                    alert(error.message);
+                }
+            }
+
+            function closeModal() {
+                const modal = document.getElementById('capsule-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        </script>
 
         {% endblock %}
 
