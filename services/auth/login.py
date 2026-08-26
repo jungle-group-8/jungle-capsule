@@ -19,29 +19,29 @@ def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리�
             #정보 가져오기
             user = db.Users.find_one({"id":userId, "pw": userPw})
             session['id'] = userId
-            session['name'] = user['name']
+            session['name'] = user["name"]
             session['curriculum'] = user['curriculum']
             session['class'] = user['class']
 
             isSuccess = "success"
-            template = "capsule/main.html"
             #return render_template("login.html", success = isSuccess ) #(변수) 판단후 넘김
             #return jsonify({'result': 'success'})
             return redirect(url_for("capsule.main")) #로그인 페이지로 이동
         else: #비밀번호가 틀리다면
             session['id'] = None
             isSuccess = "pw_fail"
-            template = "auth/login.html"
-            return render_template(template, success = isSuccess )
-            #return jsonify({'result': 'pw_fail'})
+            # return render_template(url_for("auth.login") )
+            #return redirect(url_for("auth.login"))#, success = isSuccess)
+            #return render_template("auth/login.html", success = isSuccess)
+            return jsonify({'result': 'pw_fail'})
             #return redirect(url_for('login')) #로그인 페이지로 이동 #redirect할때 메모도 같이 보낼 수 있는지 확인
 
     else: #사용자가 없다면
         session['id'] = None
         isSuccess = "id_fail"
-        template = "auth/login.html"
-        return rendertemplate(template, success = isSuccess )
-        #return jsonify({'result': 'id_fail'})
+        #return redirect(url_for("auth.login"))#, success = isSuccess)
+        #return render_template("templates/auth/login.html", success = isSuccess)
+        return jsonify({'result': 'id_fail'})
         #return redirect(url_for('index')) #자신의 페이지로 이동
         #return jsonify({'id': userId, 'pw': userPw})
 
@@ -65,13 +65,12 @@ def signup():#프론트에서 id 중복체크 필수로 만듬
 
 
     #isJungler 일치로직
-    if isJungelr_receive == "Jungle@55Krafton":
+    if  isJungler_receive == "Jungle@55Krafton":
         db.Users.insert_one({
         "name":name_receive,
         "id":id_receive,
         "pw":pw_receive,
         "curriculum": curriculum_receive,
-        "isCoach": isCoach_receive,
         "class": class_receive,
         "mailAdress": mailAdress_receive,
         })
@@ -94,3 +93,11 @@ def idCheck():
         return jsonify({'result': 'success'})
     else:
         return jsonify({'result': 'fail'})
+
+@auth_bp.route('/getUserInfo', methods = ['GET'])
+def getUserInfo():
+    sId = session['id']
+    sName = session['name']
+    sCurriculum = session['curriculum']
+    sClass = session['class']
+    return jsonify({"id":sId, "name":sName, "curriculum":sCurriculum, "class":sClass})
