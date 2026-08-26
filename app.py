@@ -5,19 +5,21 @@ import os
 from datetime import datetime
 import random
 
-client=MongoClient(os.getenv("MONGO_URL"))
-db=client["jungle-capsule"]
-collection=db["items"]
+
+
 
 app = Flask(__name__)
 
 
 
 
+<<<<<<< HEAD
         
         
 
 
+=======
+>>>>>>> 6108f6efcc2bb4ab2fddff34af6263fae4e2f801
 
 
 if __name__ == '__main__':  
