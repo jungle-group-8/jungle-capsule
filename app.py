@@ -1,17 +1,15 @@
-from flask import Flask,render_template,request,jsonify,session,redirect,url_for
-from bson import ObjectId
-from pymongo import MongoClient
+from flask import Flask
 from routes.capsule import capsule_bp
 from routes.auth import auth_bp
+from dotenv import load_dotenv
 import os
-from datetime import datetime
-import random
 from routes import capmaking,capsulelist,checkcap,deletecap,detailcpa,member,question
-
+from services import imageupload
 
 
 
 app = Flask(__name__)
+load_dotenv()
 
 app.register_blueprint(capmaking.capmaking)
 app.register_blueprint(capsulelist.caplist)
@@ -20,10 +18,15 @@ app.register_blueprint(deletecap.deletecap)
 app.register_blueprint(detailcpa.detailcap)
 app.register_blueprint(member.members)
 app.register_blueprint(question.question)
+app.register_blueprint(imageupload.image_bp)
 
 app.register_blueprint(capsule_bp)
 app.register_blueprint(auth_bp)
 
+
+app.config["S3_ACCESS_KEY"] = os.getenv("S3_ACCESS_KEY")
+app.config["S3_SECRET_KEY"] = os.getenv("S3_SECRET_KEY")
+app.config["S3_BUCKET"] = os.getenv("S3_BUCKET")
 
 if __name__ == '__main__':  
    app.run('0.0.0.0', port=5001, debug=True)
