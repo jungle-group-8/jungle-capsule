@@ -15,7 +15,9 @@
 <body>
     <header class="bg-white py-4">
         <div class="flex justify-between items-center m-6">
-        <img src="{{ url_for('static', filename='images/jungle_capsule.png') }}" width="100 alt="정글 캡슐 로고">
+        <a href="{{ url_for('index') }}" class="text-2xl font-bold text-black">
+            <img src="{{ url_for('static', filename='images/jungle_capsule.png') }}" width="100" alt="정글 캡슐 로고">
+        </a>
         <div id="user info" class="flex flex-col">
             <span id="class" class="text-right text-base">KRAFTON JUNGLE 13기</span>
             <span id="username" class="text-right text-xl">강민서님, 안녕하세요</span>
