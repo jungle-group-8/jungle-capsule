@@ -9,22 +9,6 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}" </head>
 
-    <script>
-        function openModal() {
-            const modal = document.getElementById('junglers-modal');
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('junglers-modal');
-
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-    </script>
-
 <body>
     <!-- 헤더 -->
     {% include 'components/header.html' %}
@@ -34,12 +18,13 @@
     {% block content %}
 
     <div class="flex gap-4 py-7">
-        <button onclick="openModal()"
+        <button type="button" onclick="openModal()"
             class="font-bold text-center w-full h-100 rounded-[20px] px-6 py-5 bg-white text-black shadow-md hover:bg-[#BFDDB8] transition">
             다른 정글러에게 보내기
         </button>
-        <button
-            class="font-bold text-center w-full h-100 rounded-[20px] px-4 py-2 bg-white text-black shadow-md hover:bg-[#BFDDB8] transition">
+        <button type="button" data-user-id="{{ session.get('id', '') }}" onclick="getReceiverId(this.dataset.userId)"
+            class="font-bold text-center w-full h-100 rounded-[20px] px-4 py-2 bg-white text-black shadow-md
+            hover:bg-[#BFDDB8] transition">
             미래의 나에게 보내기
         </button>
     </div>
@@ -52,23 +37,73 @@
                     KRAFTON JUNGLE 13기 - SW/AI<br />
                     타임캡슐을 전해 줄 정글러를 선택해주세요.
                 </p>
-                <button type="button" class="top-2 right-2 text-gray-500 hover:text-gray-700"
+                <button type="button" class="w-3 top-2 right-2 text-gray-500 hover:text-gray-700"
                     onclick="closeModal()">x</button>
             </div>
 
             <div class="border-t border-gray-400 mb-4"></div>
 
-            <div class="grid grid-cols-5 gap-4">
-
-                <button type="button" class="w-fit bg-white rounded-[20px] shadow-md p-4 text-sm
-                    hover:bg-[#F3F8F1] transition cursor-pointer">
-                    정글러 1
-                </button>
-
+            <div id="member-list" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-80 overflow-y-auto">
+                <p class="col-span-full text-sm text-gray-600">회원 목록을 불러오는 중입니다.</p>
             </div>
         </div>
 
+        <script>
+            async function openModal() {
+                const modal = document.getElementById('junglers-modal');
+                const memberList = document.getElementById('member-list');
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                memberList.innerHTML = '<p class="col-span-full text-sm text-gray-600">회원 목록을 불러오는 중입니다.</p>';
+
+                try {
+                    const response = await fetch("{{ url_for('capmember.member') }}");
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || '회원 목록을 불러오지 못했습니다.');
+                    }
+
+                    memberList.innerHTML = '';
+                    data.members.forEach((member) => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = 'w-full h-14 px-3 bg-white rounded-xl shadow-md text-sm text-center truncate hover:bg-[#F3F8F1] transition cursor-pointer';
+                        button.title = member.name;
+                        button.textContent = member.name;
+                        button.addEventListener('click', () => getReceiverId(member.id));
+                        memberList.appendChild(button);
+                    });
+
+                    if (data.members.length === 0) {
+                        memberList.innerHTML = '<p class="col-span-full text-sm text-gray-600">선택할 수 있는 회원이 없습니다.</p>';
+                    }
+                } catch (error) {
+                    memberList.innerHTML = `<p class="col-span-full text-sm text-red-600">${error.message}</p>`;
+                }
+            }
+
+            function closeModal() {
+                const modal = document.getElementById('junglers-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
+            function getReceiverId(userId) {
+                if (!userId) {
+                    alert('로그인이 필요합니다.');
+                    return;
+                }
+
+                const createCapsuleUrl = "{{ url_for('capsule.create_capsule') }}";
+                const params = new URLSearchParams({ receiverId: userId });
+                window.location.href = `${createCapsuleUrl}?${params.toString()}`;
+            }
+        </script>
+
         {% endblock %}
+
 
 </body>
 

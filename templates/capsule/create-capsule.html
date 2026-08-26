@@ -46,12 +46,13 @@
             <!-- 오른쪽 폼 -->
             <div class="w-2/3 flex flex-col gap-4">
                 <form action="{{url_for('capmaking.makingCapsule')}}" method="POST">
+                <input type="hidden" name="receiveId" value="{{ receiver_id }}">
                 <div class="flex items-center gap-4">
                     <label class="w-28 text-right text-sm font-semibold text-gray-700">
                         제목
                     </label>
 
-                    <input type="text" name="title" class="flex-1 border bg-white border-gray-300 rounded-md p-2
+                    <input type="text" name="title" required class="flex-1 border bg-white border-gray-300 rounded-md p-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]">
                 </div>
 
@@ -78,7 +79,7 @@
                         내용
                     </label>
 
-                    <textarea name="contents" placeholder="내용을 입력하세요" class="flex-1 min-h-32 border bg-white border-gray-300 rounded-md p-2
+                    <textarea name="contents" required placeholder="내용을 입력하세요" class="flex-1 min-h-32 border bg-white border-gray-300 rounded-md p-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]"></textarea>
                 </div>
 

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 
 capsule_bp = Blueprint("capsule", __name__)
 
@@ -12,7 +12,11 @@ def create_choice():
 
 @capsule_bp.route("/create-capsule")
 def create_capsule():
-    return render_template("capsule/create-capsule.html")
+    receiver_id = request.args.get("receiverId", "").strip()
+    return render_template(
+        "capsule/create-capsule.html",
+        receiver_id=receiver_id
+    )
 
 @capsule_bp.route("/capsule-storage")
 def capsule_storage():
