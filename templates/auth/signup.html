@@ -2,6 +2,7 @@
 
 {% block content %}
 
+
 <div class="min-h-screen flex items-center justify-center">
 
     <div class="w-full max-w-md flex flex-col items-center gap-8 px-6">
@@ -15,16 +16,18 @@
             >
         </div>
 
-        <!-- 로그인 폼 -->
+        <!-- 회원가입 폼 -->
         <div class="w-full flex flex-col gap-5">
+            <form method="POST" action="{{ url_for('auth.signup') }}" onsubmit="return validateSignup()" class="w-full flex flex-col gap-5">
 
-            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4">
                 <label class="w-24 text-sm font-semibold text-gray-700">
                     이름
                 </label>
 
                 <input
                     type="text"
+                    required
                     name="name"
                     class="flex-1 border border-gray-300 rounded-lg px-3 py-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
@@ -40,7 +43,8 @@
 
                 <input
                     type="text"
-                    name="name"
+                    required
+                    name="mailAddress"
                     class="flex-1 border border-gray-300 rounded-lg px-3 py-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
                            bg-white
@@ -55,9 +59,10 @@
 
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input
+                        required
                         type="radio"
-                        name="gender"
-                        value="male"
+                        name="curriculum"
+                        value="1"
                         class="w-4 h-4 accent-[#BFDDB8]"
                     >
                     <span class="text-sm text-gray-700">SW-AI</span>
@@ -65,9 +70,10 @@
 
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input
+                        required
                         type="radio"
-                        name="gender"
-                        value="female"
+                        name="curriculum"
+                        value="2"
                         class="w-4 h-4 accent-[#BFDDB8]"
                     >
                     <span class="text-sm text-gray-700">Game</span>
@@ -75,9 +81,10 @@
 
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input
+                        required
                         type="radio"
-                        name="gender"
-                        value="female"
+                        name="curriculum"
+                        value="3"
                         class="w-4 h-4 accent-[#BFDDB8]"
                     >
                     <span class="text-sm text-gray-700">Game Tech</span>
@@ -91,8 +98,9 @@
                 </label>
 
                 <input
+                required
                     type="text"
-                    name="name"
+                    name="class"
                     class="flex-1 border border-gray-300 bg-white rounded-lg px-3 py-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
                            focus:border-transparent"
@@ -108,13 +116,16 @@
 
                 <input
                     type="text"
-                    name="name"
+                    name="id"
+                    id="signupId"
+                    required
                     class="flex-1 border border-gray-300 bg-white rounded-lg px-3 py-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
                            focus:border-transparent"
                 >
                 <button
-                    type="submit"
+                    type="button"
+                    onclick="checkId(event)"
                     class="w-1/4 py-2.5
                         bg-[#BFDDB8] text-gray-800 font-semibold
                         border border-gray-200
@@ -124,7 +135,6 @@
                 >
                     중복 확인
                 </button>
-
             </div>
 
             <div class="flex items-center gap-4">
@@ -134,7 +144,9 @@
 
                 <input
                     type="password"
-                    name="password"
+                    required
+                    id="pw"
+                    name="pw"
                     class="flex-1 border border-gray-300 bg-white rounded-lg px-3 py-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
                            focus:border-transparent"
@@ -148,12 +160,15 @@
 
                 <input
                     type="password"
-                    name="password"
+                    required
+                    id="pwConfirm"
+                    name="pwConfirm"
                     class="flex-1 border border-gray-300 bg-white rounded-lg px-3 py-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
                            focus:border-transparent"
                 >
             </div>
+            <p id="pwMessage" class="text-sm"></p>
 
             <label class="w-full text-sm font-semibold text-gray-700">
                     <span class="font-semibold">정글 수강생 인증</span><br>
@@ -163,7 +178,9 @@
             <div class="flex items-center">
                 <input
                     type="text"
-                    name="name"
+                    required
+                    id="isJungler"
+                    name="isJungler"
                     class="flex-1 border border-gray-300 bg-white rounded-lg px-3 py-2
                            focus:outline-none focus:ring-2 focus:ring-[#BFDDB8]
                            focus:border-transparent"
@@ -173,6 +190,7 @@
             <div class="flex gap-6">
                 <button
                     type="button"
+
                     class=" w-1/2 py-2.5
                         bg-gray-200 text-gray-800 font-semibold
                         border border-gray-200
@@ -184,7 +202,7 @@
                     취소
                 </button>
                 <button
-                    type="button"
+                    type="submit"
                     class="w-1/2 py-2.5
                         bg-white text-gray-800 font-semibold
                         border border-gray-200
@@ -196,10 +214,103 @@
                 </button>
             </div>
             
+        </form>
         </div>
-
     </div>
 
 </div>
+
+
+<script>
+    const pwInput = document.getElementById("pw");
+    const pwConfirmInput = document.getElementById("pwConfirm");
+    const pwMessage = document.getElementById("pwMessage");
+
+    function checkPassword() {
+        if (!pwConfirmInput.value) {
+            pwMessage.textContent = "";
+            return;
+        }
+
+        if (pwInput.value === pwConfirmInput.value) {
+            pwMessage.textContent = "비밀번호가 일치합니다.";
+            pwMessage.className = "text-sm text-green-600";
+        } else {
+            pwMessage.textContent = "비밀번호가 일치하지 않습니다.";
+            pwMessage.className = "text-sm text-red-500";
+        }
+    }
+
+    pwInput.addEventListener("input", checkPassword);
+    pwConfirmInput.addEventListener("input", checkPassword);
+</script>
+<script>
+function validateSignup() {
+    const form = document.querySelector('form[action="{{ url_for("auth.signup") }}"]');
+    const name = form.elements["name"].value.trim();
+    const email = form.elements["mailAddress"].value.trim();
+    const curriculum = form.querySelector(
+        'input[name="curriculum"]:checked'
+    );
+
+    if (!name) {
+        alert("이름을 입력해 주세요.");
+        form.elements["name"].focus();
+        return false;
+    }
+
+    if (!email) {
+        alert("이메일을 입력해 주세요.");
+        form.elements["mailAddress"].focus();
+        return false;
+    }
+
+    if (!curriculum) {
+        alert("커리큘럼을 선택해 주세요.");
+        return false;
+    }
+
+    if (pwInput.value !== pwConfirmInput.value) {
+        alert("비밀번호가 일치하지 않습니다.");
+        pwConfirmInput.focus();
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+<script>
+async function checkId(event) {
+    event.preventDefault();
+
+    const id = document.getElementById("signupId").value.trim();
+
+    if (!id) {
+        alert("아이디를 입력해 주세요.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("id", id);
+
+    try {
+        const response = await fetch("{{ url_for('auth.idCheck') }}", {
+            method: "POST",
+            body: formData
+        });
+        const data = await response.json();
+
+        if (data.result === "success") {
+            alert("사용 가능한 아이디입니다.");
+        } else {
+            alert("이미 사용 중인 아이디입니다.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("중복 확인 중 오류가 발생했습니다.");
+    }
+}
+</script>
 
 {% endblock %}

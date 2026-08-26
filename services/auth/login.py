@@ -11,6 +11,7 @@ auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route('/login', methods = ['POST'])
 def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리면 "비밀번호가 틀림 알림 가도록"
+
     userId = request.form['id']
     userPw = request.form['pw']
     isUser = db.Users.find_one({"id": userId})
@@ -30,8 +31,8 @@ def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리�
         else: #비밀번호가 틀리다면
             session['id'] = None
             isSuccess = "pw_fail"
-            return render_template("auth/login.html")
-            #return redirect(url_for("auth.login"))#, success = isSuccess)
+            #return render_template("auth/login.html")
+            return render_template("auth/login.html", success = isSuccess)
             #return render_template("auth/login.html", success = isSuccess)
             #return jsonify({'result': 'pw_fail'})
             #return redirect(url_for('login')) #로그인 페이지로 이동 #redirect할때 메모도 같이 보낼 수 있는지 확인
@@ -39,8 +40,8 @@ def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리�
     else: #사용자가 없다면
         session['id'] = None
         isSuccess = "id_fail"
-        #return redirect(url_for("auth.login"))#, success = isSuccess)
-        return render_template("auth/login.html")
+        return render_template("auth/login.html", success = isSuccess)
+        #return render_template("auth/login.html")
         #return jsonify({'result': 'id_fail'})
         #return redirect(url_for('index')) #자신의 페이지로 이동
         #return jsonify({'id': userId, 'pw': userPw})
@@ -54,13 +55,30 @@ def logout():
 
 @auth_bp.route('/signup', methods = ['POST'])
 def signup():#프론트에서 id 중복체크 필수로 만듬
-    name_receive= request.form["name"]
-    id_receive= request.form["id"]
-    pw_receive= request.form["pw"]
-    curriculum_receive= request.form["curriculum"] #enum
-    class_receive= request.form["class"]
-    mailAdress_receive= request.form["mailAdress"]
-    isJungler_receive= request.form["isJungler"]
+    name_receive = request.form.get("name")
+    id_receive = request.form.get("id")
+    pw_receive = request.form.get("pw")
+    curriculum_receive = request.form.get("curriculum")
+    class_receive = request.form.get("class")
+    mailAdress_receive = request.form.get("mailAddress")
+    isJungler_receive = request.form.get("isJungler")
+
+    required_fields = {
+        "name": name_receive,
+        "id": id_receive,
+        "pw": pw_receive,
+        "curriculum": curriculum_receive,
+        "class": class_receive,
+        "mailAddress": mailAdress_receive,
+        "isJungler": isJungler_receive,
+    }
+    missing_fields = [key for key, value in required_fields.items() if not value]
+    if missing_fields:
+        return jsonify({
+            "result": "fail",
+            "message": "필수 입력값이 누락되었습니다.",
+            "missing_fields": missing_fields,
+        }), 400
 
 
 
@@ -88,7 +106,7 @@ def signup():#프론트에서 id 중복체크 필수로 만듬
 @auth_bp.route('/signup/idCheck', methods = ['POST'])
 def idCheck():
     id_receive= request.form["id"]
-    user = db.collections.Users.find_one({"id": id_receive})
+    user = db.Users.find_one({"id": id_receive})
     if user is None:
         return jsonify({'result': 'success'})
     else:
@@ -100,4 +118,5 @@ def getUserInfo():
     sName = session['name']
     sCurriculum = session['curriculum']
     sClass = session['class']
-    return jsonify({"id":sId, "name":sName, "curriculum":sCurriculum, "class":sClass})
+    # return jsonify({"id":sId, "name":sName, "curriculum":sCurriculum, "class":sClass})
+    return render_template("components/header.html", Id=sId,name=sName,curriculum=sCurriculum,class_name=sClass)
