@@ -1,7 +1,9 @@
-from flask import Flask,render_template,request,jsonify
+from flask import Flask,render_template,request,jsonify,session,redirect,url_for
 from bson import ObjectId
 from pymongo import MongoClient
 import os
+from datetime import datetime
+import random
 
 client=MongoClient(os.getenv("MONGO_URL"))
 db=client["jungle-capsule"]
@@ -9,12 +11,13 @@ collection=db["items"]
 
 app = Flask(__name__)
 
-try:
-    client.admin.command("ping")
-    print("MongoDB 연결 성공")
-except Exception as e:
-    print("MongoDB 연결 실패")
-    print(e)
+
+
+
+        
+        
+
+
 
 
 if __name__ == '__main__':  
