@@ -4,6 +4,7 @@ from routes.auth import auth_bp
 from dotenv import load_dotenv
 
 from services.auth import login #blueprint사용 login.py import
+from routes import capsule
 from database import client   #database에서 client  변수 가져옴
 
 import os
@@ -17,6 +18,7 @@ app = Flask(__name__)
 load_dotenv()
 
 app.secret_key = os.getenv("SECRET_KEY")
+app.register_blueprint(capsule.capsule_bp)
 app.register_blueprint(login.auth_bp)
 
 
@@ -31,7 +33,6 @@ app.register_blueprint(imageupload.image_bp)
 
 app.register_blueprint(capsule_bp)
 app.register_blueprint(auth_bp)
-
 
 app.config["S3_ACCESS_KEY"] = os.getenv("S3_ACCESS_KEY")
 app.config["S3_SECRET_KEY"] = os.getenv("S3_SECRET_KEY")
