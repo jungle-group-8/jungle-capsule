@@ -3,6 +3,10 @@ from bson import ObjectId
 from pymongo import MongoClient
 from routes.capsule import capsule_bp
 from routes.auth import auth_bp
+
+from services.auth import login #blueprint사용 login.py import
+from database import client   #database에서 client  변수 가져옴
+
 import os
 from datetime import datetime
 import random
@@ -12,6 +16,8 @@ from routes import capmaking,capsulelist,checkcap,deletecap,detailcpa,member,que
 
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY")
+app.register_blueprint(login.auth_bp)
 
 app.register_blueprint(capmaking.capmaking)
 app.register_blueprint(capsulelist.caplist)
