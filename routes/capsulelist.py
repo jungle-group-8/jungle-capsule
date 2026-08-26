@@ -59,20 +59,26 @@ def count_cap():
         })
     )
     OpenCapCount = len(openCap)
+    today_start = datetime.now().replace(
+            hour=0,
+            minute=0,
+            second=0
+        )
+    tomorrow_start = today_start + timedelta(days=1)
 
-    CloseCap = list(
+    # 오늘 작성한 캡슐
+    SendCap = list(
         db.Capsule.find({
-            'receiveId': user_id
+            'sendId': user_id,
+            'CreatedAt': {
+                            '$gte': today_start,
+                            '$lt': tomorrow_start
+                        }
         })
     )
-    CloseCapCount = len(CloseCap) - OpenCapCount
+    SendCapCount = len(SendCap)
 
-    today_start = datetime.now().replace(
-        hour=0,
-        minute=0,
-        second=0
-    )
-    tomorrow_start = today_start + timedelta(days=1)
+    #오늘 받은 캡슐
 
     create = list(
         db.Capsule.find({
@@ -86,5 +92,5 @@ def count_cap():
     CreateCount = len(create)
 
     return {"OpenCapCount" : OpenCapCount,
-        "CloseCapCount" : CloseCapCount,
+        "CloseCapCount" : SendCapCount,
         "CreateCount" :CreateCount}
