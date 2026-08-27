@@ -35,48 +35,80 @@
     {% block content %}
 
     <div class="flex gap-4">
-        <div class="w-1/2 grid grid-cols-2 gap-4">
-            <button type="button" onclick="location.href=`{{ url_for('capsule.create_choice') }}`"
-                class="font-bold text-left w-full h-100 rounded-[20px] px-4 py-2 bg-white text-black shadow-md hover:bg-[#BFDDB8] transition">
-                캡슐 생성
-            </button>
-            <button type="button" onclick="openModal()"
-                class="font-bold text-left w-full h-100 rounded-[20px] px-4 py-2 bg-white text-black shadow-md hover:bg-[#BFDDB8] transition">
-                오늘의 질문 생성
-            </button>
+        <div class="w-1/2 grid grid-cols-2 grid-rows-[25rem_25rem] gap-4">
             <button
-                class="font-bold text-left w-full col-span-2 h-100 px-4 py-2 bg-white text-black rounded-[20px] shadow-md hover:bg-[#BFDDB8] transition"
-                onclick="location.href=`{{ url_for('capsule.capsule_storage') }}`">
-                나의 캡슐 보관함
+                type="button"
+                onclick="location.href=`{{ url_for('capsule.create_choice') }}`"
+                class="flex flex-col items-start justify-between w-full h-full p-6
+                    text-xl font-bold text-left
+                    rounded-[20px] bg-white text-black shadow-md
+                    hover:bg-[#BFDDB8] transition"
+            >
+                <span>캡슐 생성</span>
+                <img src="{{url_for('static',filename='images/go.png')}}" class="mb-5 w-1/3" alt="바로가기 이미지">
+                
             </button>
-        </div>
 
 
-        <div class="w-[40%] grid grid-cols-2 gap-4">
+            <button
+                type="button"
+                onclick="openModal()"
+                class="flex flex-col items-start justify-between w-full h-full p-6
+                    text-xl font-bold text-left
+                    rounded-[20px] bg-white text-black shadow-md
+                    hover:bg-[#BFDDB8] transition"
+            >
+                오늘의 질문 생성
+                <img src="{{url_for('static',filename='images/go.png')}}" class="mb-5 w-1/3" alt="바로가기 이미지">
+            </button>
+
+            <button
+                type="button"
+                onclick="location.href=`{{ url_for('capsule.capsule_storage') }}`"
+                class="flex col-span-2 items-start justify-start w-full h-full pt-6 pl-6
+                    text-xl font-bold text-left
+                    rounded-[20px] bg-white text-black shadow-md
+                    hover:bg-[#BFDDB8] transition"
+            >
+                나의 캡슐 보관함
+
+            </button>
+    </div>
+
+
+        <div class="w-[40%] grid grid-cols-2 grid-rows-[25rem_12.5rem_12.5rem] gap-4">
 
             <!-- 오늘의 질문 -->
-            <div class="col-span-2 h-100 px-4 py-2 text-black">
-                <h2 class="font-bold text-left text-xl">오늘의 질문</h2>
-                <p class="text-left text-xl">{{qa}}</p>
+            <div class="col-span-2 flex flex-col h-full items-end px-4 py-2 wrap-break-word text-black">
+                <h2 class="font-bold text-left text-xl">오늘의 질문 (2026.8.27(목))</h2>
+                <p class="text-left">오늘의 질문을 참고하여 타임캡슐 내용을 작성해보세요.</p>
+                <p class="text-left w-full text-xl pt-2 text-green-800">"{{qa}}"</p>
 
+                <img src="{{url_for('static',filename='images/capsule_with_tree.png')}}" class="self-end mt-auto w-[40%]" alt="바로가기 이미지">
             </div>
 
             <!-- 대시보드  -->
             <button
-                class="font-bold text-left w-full h-50 px-4 py-2 bg-white text-black rounded-[20px] shadow-md hover:bg-[#BFDDB8] transition">
-                오늘 열 수 있는 캡슐 개수
-                <num class="text-2xl font-bold text-black">{{count_cap.get("OpenCapCount")}}</num>
+                type="button"
+                class="flex flex-col items-stretch justify-between w-full h-full p-6
+                    bg-[#BFDDB8] text-black rounded-[20px] shadow-md">
+                <span class="self-start font-bold text-left">오늘 열 수 있는 캡슐 개수</span>
+                <span class="self-end text-4xl font-bold">{{ count_cap.get("OpenCapCount") }}</span>
             </button>
             <button
-                class="font-bold text-left w-full px-4 py-2 bg-white text-black rounded-[20px] shadow-md hover:bg-[#BFDDB8] transition">
-                오늘 받은 캡슐 개수
-                <num class="text-2xl font-bold text-black">{{count_cap.get("CreateCount")}}</num>
+                type="button"
+                class="flex flex-col items-stretch justify-between w-full h-full p-6
+                    bg-[#BFDDB8] text-black rounded-[20px] shadow-md">
+                <span class="self-start font-bold text-left">오늘 받은 캡슐 개수</span>
+                <span class="self-end text-4xl font-bold">{{ count_cap.get("CreateCount") }}</span>
             </button>
 
             <button
-                class="font-bold text-left w-full h-50 px-4 py-2 bg-white text-black rounded-[20px] shadow-md hover:bg-[#BFDDB8] transition">
-                오늘 작성한 캡슐 개수
-                <num class="text-2xl font-bold text-black">{{count_cap.get("CloseCapCount")}}</num>
+                type="button"
+                class="flex flex-col items-stretch justify-between w-full h-full p-6
+                    bg-[#BFDDB8] text-black rounded-[20px] shadow-md">
+                <span class="self-start font-bold text-left">오늘 작성한 캡슐 개수</span>
+                <span class="self-end text-4xl font-bold">{{ count_cap.get("CloseCapCount") }}</span>
             </button>
         </div>
     </div>

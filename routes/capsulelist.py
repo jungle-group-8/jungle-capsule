@@ -78,7 +78,7 @@ def count_cap():
     )
     SendCapCount = len(SendCap)
 
-    #오늘 받은 캡슐
+    
 
     create = list(
         db.Capsule.find({

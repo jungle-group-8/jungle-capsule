@@ -36,12 +36,12 @@ def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리�
             # return render_template("auth/login.html", success = isSuccess)
             #return render_template("auth/login.html", success = isSuccess)
             #return jsonify({'result': 'pw_fail'})
-            return redirect(url_for('login',success=isSuccess)) #로그인 페이지로 이동 #redirect할때 메모도 같이 보낼 수 있는지 확인
+            return redirect(url_for('authpage.login',success=isSuccess)) #로그인 페이지로 이동 #redirect할때 메모도 같이 보낼 수 있는지 확인
 
     else: #사용자가 없다면
         session['id'] = None
         isSuccess = "id_fail"
-        return redirect(url_for('login',success=isSuccess))
+        return redirect(url_for('authpage.login',success=isSuccess))
         #return render_template("auth/login.html")
         #return jsonify({'result': 'id_fail'})
         #return redirect(url_for('index')) #자신의 페이지로 이동
@@ -51,7 +51,8 @@ def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리�
 def logout():
     session.clear()
     #return render_template("auth/login.html")
-    return render_template("login.html", success="logout_success")
+    #return render_template("login.html", success="logout_success")
+    return redirect(url_for("authpage.login"))
 
 
 @auth_bp.route('/signup', methods = ['POST'])

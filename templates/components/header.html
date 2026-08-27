@@ -59,6 +59,14 @@
                     </p>
                 </span>
 
+                <form class="text-right" action="{{url_for('auth.logout')}}" method="POST">
+                <button 
+                    type="submit"
+                    class="cursor-pointer">
+                    <span class="underline text-gray-400 text-sm">로그아웃</span>
+                </button>
+                </form>
+
             </div>
         </div>
     </header>

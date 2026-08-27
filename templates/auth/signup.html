@@ -245,10 +245,13 @@
     pwConfirmInput.addEventListener("input", checkPassword);
 </script>
 <script>
+let checkedSignupId = null;
+
 function validateSignup() {
     const form = document.querySelector('form[action="{{ url_for("auth.signup") }}"]');
     const name = form.elements["name"].value.trim();
     const email = form.elements["mailAddress"].value.trim();
+    const id = form.elements["id"].value.trim();
     const curriculum = form.querySelector(
         'input[name="curriculum"]:checked'
     );
@@ -273,6 +276,11 @@ function validateSignup() {
     if (pwInput.value !== pwConfirmInput.value) {
         alert("비밀번호가 일치하지 않습니다.");
         pwConfirmInput.focus();
+        return false;
+    }
+
+    if (checkedSignupId !== id) {
+        alert("아이디 중복체크를 다시 해주세요.");
         return false;
     }
 
@@ -302,11 +310,14 @@ async function checkId(event) {
         const data = await response.json();
 
         if (data.result === "success") {
+            checkedSignupId = id;
             alert("사용 가능한 아이디입니다.");
         } else {
+            checkedSignupId = null;
             alert("이미 사용 중인 아이디입니다.");
         }
     } catch (error) {
+        checkedSignupId = null;
         console.error(error);
         alert("중복 확인 중 오류가 발생했습니다.");
     }

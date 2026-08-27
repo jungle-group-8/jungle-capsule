@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>캡슐 보관함</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}"> </head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
+</head>
 
 <body>
     <!-- 헤더 -->
@@ -22,19 +23,27 @@
         {%for capsule in capsules_list%}
         <div class="flex flex-col bg-white shadow-2xl rounded-[20px]">
             {% if not capsule.isOpen %}
-                <img src="{{ url_for('static', filename='images/closed_capsule.png') }}" alt="닫힌 캡슐"
-                    class="w-60 h-60 mx-auto mt-8 cursor-pointer" onclick="openModal('{{ capsule.id }}')">
-                <div class=" text-shadow-black pt-1 pb-1 w-[80%] mx-auto bg-[#BFDDB8] border-r-amber-50 rounded-lg text-lg text-center font-bold
-                    leading-4"><p>D-{{capsule.dDay}}</p></div>
-                <div class="py-2.5 text-shadow-black text-xs text-center
-                    leading-4"><p>{{capsule.previewTitle}}</p></div>
+            <img src="{{ url_for('static', filename='images/closed_capsule.png') }}" alt="닫힌 캡슐"
+                class="w-60 h-60 mx-auto mt-8 cursor-pointer" onclick="openModal('{{ capsule.id }}')">
+            <div class=" text-shadow-black pt-1 pb-1 w-[80%] mx-auto bg-[#BFDDB8] border-r-amber-50 rounded-lg text-lg text-center font-bold
+                    leading-4">
+                <p>D-{{capsule.dDay}}</p>
+            </div>
+            <div class="py-2.5 text-shadow-black text-xs text-center
+                    leading-4">
+                <p>{{capsule.previewTitle}}</p>
+            </div>
             {% else %}
-                <img src="{{ url_for('static', filename='images/opened_capsule.png') }}" alt="열린 캡슐"
-                    class="w-60 h-60 mx-auto mt-8 cursor-pointer" onclick="openModal('{{ capsule.id }}')">
-                <div class=" text-shadow-black pt-1 pb-1 w-[80%] mx-auto bg-[#BFDDB8] border-r-amber-50 rounded-lg text-lg text-center font-bold
-                    leading-4"><p>D-{{capsule.dDay}}</p></div>
-                <div class="py-2.5 text-shadow-black text-xs text-center
-                    leading-4"><p>{{capsule.previewTitle}}</p></div>
+            <img src="{{ url_for('static', filename='images/opened_capsule.png') }}" alt="열린 캡슐"
+                class="w-60 h-60 mx-auto mt-8 cursor-pointer" onclick="openModal('{{ capsule.id }}')">
+            <div class=" text-shadow-black pt-1 pb-1 w-[80%] mx-auto bg-[#BFDDB8] border-r-amber-50 rounded-lg text-lg text-center font-bold
+                    leading-4">
+                <p>D-{{capsule.dDay}}</p>
+            </div>
+            <div class="py-2.5 text-shadow-black text-xs text-center
+                    leading-4">
+                <p>{{capsule.previewTitle}}</p>
+            </div>
             {% endif %}
         </div>
         {% endfor %}
@@ -83,11 +92,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <img
-                        id="modal-image"
-                        alt="캡슐 이미지"
-                        class="w-full rounded-lg"
-                    >
+                    <img id="modal-image" alt="캡슐 이미지" class="w-full rounded-lg">
                 </div>
 
                 <div class="bg-banner"></div>
@@ -101,59 +106,103 @@
                             transition" onclick="closeModal()">
                         닫기
                     </button>
-                   
+                    <button type="button" class=" w-full py-2.5
+                            bg-red-200 text-gray-800 font-semibold
+                            border border-gray-200
+                            rounded-xl shadow-sm
+                            hover:bg-red-600
+                            transition" onclick="deleteCapsule()">
+                        삭제
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-        <script>
-            async function openModal(capsuleId) {
-                const detailUrl = "{{ url_for('capdetail.detail_Capsule', capsule_id='CAPSULE_ID') }}"
-                    .replace('CAPSULE_ID', encodeURIComponent(capsuleId));
+    <script>
+        let selectedCapsuleId = null;
+
+        async function openModal(capsuleId) {
+            selectedCapsuleId = capsuleId;
+
+            const detailUrl = "{{ url_for('capdetail.detail_Capsule', capsule_id='CAPSULE_ID') }}"
+                .replace('CAPSULE_ID', encodeURIComponent(capsuleId));
 
 
-                try {
-                    const response = await fetch(detailUrl);
-                    const capsuleInfo = await response.json();
+            try {
+                const response = await fetch(detailUrl);
+                const capsuleInfo = await response.json();
 
-                    if (!response.ok) {
-                        throw new Error(capsuleInfo.message || '캡슐 상세 조회에 실패했습니다.');
-                    }
-
-                    document.getElementById('modal-sender').textContent = `${capsuleInfo.sendId}님으로부터 온 캡슐`;
-                    document.getElementById('modal-created-at').textContent = capsuleInfo.CreatedAt
-                        ? new Date(capsuleInfo.CreatedAt).toLocaleDateString('ko-KR')
-                        : '';
-                    document.getElementById('modal-title').value = capsuleInfo.title || '';
-                    document.getElementById('modal-link').value = capsuleInfo.link || '';
-                    document.getElementById('modal-content').value = capsuleInfo.contents || '';
-                    const modalImage = document.getElementById('modal-image');
-
-                    if (capsuleInfo.presignedUrl) {
-                        modalImage.src = capsuleInfo.presignedUrl;
-                        modalImage.classList.remove('hidden');
-                    } else {
-                        modalImage.src = '';
-                        modalImage.classList.add('hidden');
-                    }
-
-                    const modal = document.getElementById('capsule-modal');
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                } catch (error) {
-                    alert(error.message);
+                if (!response.ok) {
+                    throw new Error(capsuleInfo.message || '캡슐 상세 조회에 실패했습니다.');
                 }
-            }
 
-            function closeModal() {
+                document.getElementById('modal-sender').textContent = `${capsuleInfo.sendId}님으로부터 온 캡슐`;
+                document.getElementById('modal-created-at').textContent = capsuleInfo.CreatedAt
+                    ? new Date(capsuleInfo.CreatedAt).toLocaleDateString('ko-KR')
+                    : '';
+                document.getElementById('modal-title').value = capsuleInfo.title || '';
+                document.getElementById('modal-link').value = capsuleInfo.link || '';
+                document.getElementById('modal-content').value = capsuleInfo.contents || '';
+                const modalImage = document.getElementById('modal-image');
+
+                if (capsuleInfo.presignedUrl) {
+                    modalImage.src = capsuleInfo.presignedUrl;
+                    modalImage.classList.remove('hidden');
+                } else {
+                    modalImage.src = '';
+                    modalImage.classList.add('hidden');
+                }
+
                 const modal = document.getElementById('capsule-modal');
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } catch (error) {
+                alert(error.message);
             }
-        </script>
+        }
 
-        {% endblock %}
+        function closeModal() {
+            const modal = document.getElementById('capsule-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function deleteCapsule() {
+            if (!selectedCapsuleId) {
+                alert("삭제할 캡슐을 찾을 수 없습니다.");
+                return;
+            }
+
+            if (!confirm("이 캡슐을 삭제하시겠습니까?")) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("id_give", selectedCapsuleId);
+
+            try {
+                const response = await fetch(
+                    "{{ url_for('capdelete.deleteCapsule') }}",
+                    {
+                        method: "DELETE",
+                        body: formData
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("캡슐 삭제에 실패했습니다.");
+                }
+
+                alert("캡슐이 삭제되었습니다.");
+                window.location.href = "{{ url_for('capsule.capsule_storage') }}";
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    </script>
+
+    {% endblock %}
 
 </body>
 
