@@ -3,13 +3,13 @@ from database import db
 from enum import Enum #enum값 사용 위함
 
 class Class(Enum):
-    SW_AI = 1
-    Game = 2
-    Game_tech = 3
+    SW_AI = "1"
+    Game = "2"
+    Game_tech = "3"
 
 auth_bp = Blueprint("auth", __name__)
 
-@auth_bp.route('/login', methods = ['POST'])
+@auth_bp.route('/login/check', methods = ['POST'])
 def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리면 "비밀번호가 틀림 알림 가도록"
 
     userId = request.form['id']
@@ -28,19 +28,20 @@ def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리�
             #return render_template("login.html", success = isSuccess ) #(변수) 판단후 넘김
             #return jsonify({'result': 'success'})
             return redirect(url_for("capsule.main")) #로그인 페이지로 이동
+
         else: #비밀번호가 틀리다면
             session['id'] = None
             isSuccess = "pw_fail"
             #return render_template("auth/login.html")
-            return render_template("auth/login.html", success = isSuccess)
+            # return render_template("auth/login.html", success = isSuccess)
             #return render_template("auth/login.html", success = isSuccess)
             #return jsonify({'result': 'pw_fail'})
-            #return redirect(url_for('login')) #로그인 페이지로 이동 #redirect할때 메모도 같이 보낼 수 있는지 확인
+            return redirect(url_for('authpage.login',success=isSuccess)) #로그인 페이지로 이동 #redirect할때 메모도 같이 보낼 수 있는지 확인
 
     else: #사용자가 없다면
         session['id'] = None
         isSuccess = "id_fail"
-        return render_template("auth/login.html", success = isSuccess)
+        return redirect(url_for('authpage.login',success=isSuccess))
         #return render_template("auth/login.html")
         #return jsonify({'result': 'id_fail'})
         #return redirect(url_for('index')) #자신의 페이지로 이동
@@ -48,9 +49,10 @@ def login(): #아이디가 없으면 "사용자 없음", 비밀번호만 틀리�
 
 @auth_bp.route('/logout', methods = ['POST'])
 def logout():
-    session.pop('id',None)
-    #return jsonify({'result': 'success'})
-    return render_template("login.html", success = "logout_success" )
+    session.clear()
+    #return render_template("auth/login.html")
+    #return render_template("login.html", success="logout_success")
+    return redirect(url_for("authpage.login"))
 
 
 @auth_bp.route('/signup', methods = ['POST'])
@@ -58,7 +60,7 @@ def signup():#프론트에서 id 중복체크 필수로 만듬
     name_receive = request.form.get("name")
     id_receive = request.form.get("id")
     pw_receive = request.form.get("pw")
-    curriculum_receive = request.form.get("curriculum")
+    curriculum_receive = Class(request.form.get("curriculum")).name
     class_receive = request.form.get("class")
     mailAdress_receive = request.form.get("mailAddress")
     isJungler_receive = request.form.get("isJungler")
@@ -96,10 +98,12 @@ def signup():#프론트에서 id 중복체크 필수로 만듬
         return jsonify({'result': 'jungler_fail'})
 
     #fortest
-    if db.Users.find_one({"name": name_receive,"id":id_receive}) is not None:
-        return jsonify({'result': 'success'}, {"name": name_receive,"id":id_receive})
+    if db.Users.find_one({"pw": pw_receive,"id":id_receive}) is not None:
+        isSuccess = "signup_success"
+        return render_template("auth/login.html", success = isSuccess)
     else:
-        return jsonify({'result': 'fail'})
+        isSuccess = "signup_fail"
+        return render_template("auth/login.html", success = isSuccess)
 
 
 
@@ -114,9 +118,15 @@ def idCheck():
 
 @auth_bp.route('/getUserInfo', methods = ['GET'])
 def getUserInfo():
-    sId = session['id']
-    sName = session['name']
-    sCurriculum = session['curriculum']
-    sClass = session['class']
-    # return jsonify({"id":sId, "name":sName, "curriculum":sCurriculum, "class":sClass})
-    return render_template("components/header.html", Id=sId,name=sName,curriculum=sCurriculum,class_name=sClass)
+    sId = session.get("id")
+    sName = session.get("pw")
+    sCurriculum = session.get("curriculum")
+    sClass = session.get("class")
+    #return jsonify({"id":sId, "name":sName, "curriculum":sCurriculum, "class":sClass})
+    return render_template(
+        "capsule/main.html",
+        Id=sId,
+        name=sName,
+        curriculum=sCurriculum,
+        class_name=sClass
+    )

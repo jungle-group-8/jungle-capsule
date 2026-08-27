@@ -15,12 +15,11 @@ def get_s3_client():
         aws_access_key_id=current_app.config["S3_ACCESS_KEY"],
         aws_secret_access_key=current_app.config["S3_SECRET_KEY"],
         config=Config(signature_version="s3v4"),
+        region_name='ap-northeast-2'
     )
 
 
-@image_bp.route("/img-upload", methods=["POST"])
-def upload_file():
-    file = request.files.get("file")
+def upload_file(file):
 
     if not file or not file.filename:
         return jsonify({
@@ -44,14 +43,13 @@ def upload_file():
         }
     )
 
-    return jsonify({
+    return {
         "success": True,
         "objectKey": object_key
-    })
+    }
 
 
 def view_file(object_key):
-    """S3 이미지 조회용 Presigned URL 생성"""
     s3 = get_s3_client()
 
     presigned_url = s3.generate_presigned_url(

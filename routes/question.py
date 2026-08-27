@@ -1,4 +1,4 @@
-from flask import Blueprint,request,redirect,url_for,render_template
+from flask import Blueprint,request,redirect,url_for,render_template, session
 from datetime import datetime
 from database import db
 from bson import ObjectId
@@ -24,25 +24,30 @@ if db.Question.count_documents({}) == 0:
         }]
     db.Question.insert_many(QA_base)
 
-@question.route('/making_QA', methods =['POST'])
+@question.route('/making_QA', methods=['POST'])
 def making_QA():
+    user_id = session.get('id')
+    if not user_id:
+        return render_template('auth/login.html')
+
     db_count = db.Question.count_documents({})
     if db_count > 3:
-        old_Question = db.Question.find_one(sort=[('CreatedAt',1)])
+        old_Question = db.Question.find_one(sort=[('CreatedAt', 1)])
+
         if old_Question:
-            db.Question.delete_one({'_id':old_Question['_id']})
+            db.Question.delete_one({'_id': old_Question['_id']})
     doc = {
-    'Id' : request.form['Id'],
-    'questionList' : request.form['questionList'],
-    'CreatedAt' : datetime.now()
+        'user_Id': user_id,
+        'questionList': request.form['questionList'],
+        'CreatedAt': datetime.now()
     }
     db.Question.insert_one(doc)
-    return '성공'
+    #return '성공'
+    return redirect(url_for('capsule.main'))
 
 
-@question.route('/show_QA', methods =['GET'])
 def show_QA():
     question = list(db.Question.find({}))
     rand_question = random.choice(question)
     qa = rand_question['questionList']
-    return qa #render_template('qa.html',qa = qa)
+    return qa
